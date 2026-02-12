@@ -1,7 +1,12 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { config, getNextToken } from "./config.ts";
-import { identify } from "./lib/discord.ts";
+import {
+	getAnimatedImageData,
+	getJsonData,
+	getStillImageData,
+	identify,
+} from "./lib/discord.ts";
 
 config.tokens.forEach(async (i, v) => {
 	const identity = await identify(i);
@@ -15,10 +20,36 @@ config.tokens.forEach(async (i, v) => {
 });
 
 const app = new Hono();
-app.get("/", (c) => {
-	return c.json({
-		penis: "psusy",
-	});
+app.get("/:id{.+\\.json}", async (c) => {
+	const fullId = c.req.param("id");
+	const id = fullId.replace(".json", "");
+	const meow = await getJsonData(id);
+	if (!meow.ok) {
+		return c.json(meow, 500);
+	}
+	return c.json(meow);
+});
+
+app.get("/:id{.+\\.png}", async (c) => {
+	const fullId = c.req.param("id");
+	const id = fullId.replace(".png", "");
+	const meow = await getStillImageData(id);
+	if (!meow) {
+		return c.status(500);
+	}
+	c.header("Content-Type", "image/png");
+	return c.body(new Uint8Array(meow));
+});
+
+app.get("/:id{.+\\.gif}", async (c) => {
+	const fullId = c.req.param("id");
+	const id = fullId.replace(".gif", "");
+	const meow = await getAnimatedImageData(id);
+	if (!meow) {
+		return c.status(500);
+	}
+	c.header("Content-Type", "image/gif");
+	return c.body(new Uint8Array(meow));
 });
 
 const server = serve({

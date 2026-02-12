@@ -14,6 +14,7 @@ export async function identify(token: string) {
 }
 
 // this should only have two uses. i will punch you if you use this directly
+// update: i just realized this has three uses. my year was ruined. i am currently having a mental breakdown while getting a divorce
 async function getJsonWITHOUTcaching(token: string, id: string) {
 	if (id === "@me") {
 		return;

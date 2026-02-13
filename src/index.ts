@@ -23,6 +23,12 @@ const app = new Hono();
 app.get("/:id{.+\\.json}", async (c) => {
 	const fullId = c.req.param("id");
 	const id = fullId.replace(".json", "");
+	if (id === "@me") {
+		return c.json({
+			ok: false,
+			message: "im an amy",
+		});
+	}
 	const meow = await getJsonData(id);
 	if (!meow.ok) {
 		return c.json(meow, 500);
@@ -33,6 +39,12 @@ app.get("/:id{.+\\.json}", async (c) => {
 app.get("/:id{.+\\.png}", async (c) => {
 	const fullId = c.req.param("id");
 	const id = fullId.replace(".png", "");
+	if (id === "@me") {
+		return c.json({
+			ok: false,
+			message: "im an amy",
+		});
+	}
 	const meow = await getStillImageData(id);
 	if (!meow) {
 		return c.status(500);
@@ -45,6 +57,12 @@ app.get("/:id{.+\\.gif}", async (c) => {
 	const fullId = c.req.param("id");
 	const id = fullId.replace(".gif", "");
 	const meow = await getAnimatedImageData(id);
+	if (id === "@me") {
+		return c.json({
+			ok: false,
+			message: "im an amy",
+		});
+	}
 	if (!meow) {
 		return c.status(500);
 	}
